@@ -98,9 +98,11 @@ describe("GlobalErrors", function() {
     errors.pushListener(handler);
 
     var addedListener = fakeGlobal.process.on.calls.argsFor(0)[1];
-    addedListener(new Error('bar'));
+    const expectedError = new Error('bar');
+    addedListener(expectedError);
 
-    expect(handler).toHaveBeenCalledWith(new Error('bar'));
+    expect(handler).toHaveBeenCalledWith(expectedError);
+    expect(expectedError.jasmineMessage).toMatch(/uncaughtException/);
 
     errors.uninstall();
 
@@ -127,10 +129,12 @@ describe("GlobalErrors", function() {
 
     errors.pushListener(handler);
 
-    var addedListener = fakeGlobal.process.on.calls.argsFor(0)[1];
-    addedListener(new Error('bar'));
+    var addedListener = fakeGlobal.process.on.calls.argsFor(1)[1];
+    const expectedError = new Error('bar');
+    addedListener(expectedError);
 
-    expect(handler).toHaveBeenCalledWith(new Error('bar'));
+    expect(handler).toHaveBeenCalledWith(expectedError);
+    expect(expectedError.jasmineMessage).toMatch(/unhandledRejection/);
 
     errors.uninstall();
 
